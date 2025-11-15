@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aesthetic Pixel Art Room</title>
+    
+    <!-- Pixel-style font -->
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+
+    <style>
+        html, body {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            width: 100%;
+            font-family: 'Press Start 2P', cursive;
+            color: white;
+            overflow: hidden;
+        }
+
+        /* Full-screen background image that fits without cropping */
+        .background-img {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            object-fit: contain; /* fit entire image */
+            background-color: black; /* fill empty space if image doesn't match aspect ratio */
+            z-index: -1;
+        }
+
+        /* Center content */
+        .content {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            text-align: center;
+        }
+
+        h1 {
+            background-color: rgba(0, 0, 0, 0.5);
+            padding: 20px 40px;
+            border-radius: 10px;
+            margin: 0;
+        }
+
+        img.pixel-art {
+            width: 150px;
+            margin-top: 20px;
+            image-rendering: pixelated;
+        }
+    </style>
+</head>
+<body>
+    <!-- Full-screen background -->
+    <img src="image.png" alt="Background Screenshot" class="background-img">
+
+    <!-- Content overlay -->
+    <div class="content">
+        <h1>Welcome to Your Focus Room</h1>
+        <img src="pixel-art.png" alt="Pixel Art Character" class="pixel-art">
+    </div>
+</body>
+</html>
