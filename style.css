@@ -1,253 +1,28 @@
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Focus Room 🌸</title>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
 
-body {
-    font-family: 'Courier New', monospace;
-    background: #000;
-    color: #fff;
-    padding: 20px;
-}
+  <h1>Focus Room 🌸</h1>
 
-.container {
-    max-width: 900px;
-    margin: 0 auto;
-}
+  <div id="timerDisplay">25:00</div>
+  <button onclick="startTimer()">Start 25-min Session</button>
+  <button onclick="resetTimer()">Reset Timer</button>
 
-.header {
-    background: #1a1a1a;
-    border: 4px solid #333;
-    padding: 20px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 15px;
-}
+  <div id="room"></div>
 
-.stats {
-    display: flex;
-    gap: 15px;
-}
+  <div>
+    <p>Points: <span id="points">0</span></p>
+    <button onclick="buyFurniture()">Buy Furniture (10 points)</button>
+  </div>
 
-.stat-box {
-    padding: 10px 20px;
-    border: 2px solid;
-    font-weight: bold;
-    font-size: 16px;
-}
+  <script src="script.js"></script>
+</body>
+</html>
 
-.coins {
-    background: #d97706;
-    border-color: #fbbf24;
-}
-
-.time {
-    background: #2563eb;
-    border-color: #60a5fa;
-}
-
-.shop-btn {
-    background: #16a34a;
-    border: 2px solid #4ade80;
-    color: white;
-    padding: 10px 20px;
-    font-weight: bold;
-    cursor: pointer;
-}
-
-.shop-btn:hover {
-    background: #15803d;
-}
-
-.game-container {
-    background: #1a1a1a;
-    border: 4px solid #333;
-    padding: 20px;
-    margin-bottom: 20px;
-}
-
-#gameCanvas {
-    width: 100%;
-    height: auto;
-    border: 4px solid #444;
-    image-rendering: pixelated;
-    background: #2a2a2a;
-    display: block;
-}
-
-.controls-text {
-    text-align: center;
-    margin-top: 10px;
-    font-size: 14px;
-    color: #aaa;
-}
-
-.study-section {
-    background: #1a1a1a;
-    border: 4px solid #333;
-    padding: 30px;
-}
-
-.study-title {
-    font-size: 24px;
-    font-weight: bold;
-    margin-bottom: 20px;
-}
-
-.study-controls {
-    display: flex;
-    gap: 20px;
-    align-items: center;
-    flex-wrap: wrap;
-}
-
-.timer-display {
-    flex: 1;
-    min-width: 200px;
-    background: #000;
-    border: 4px solid #444;
-    padding: 30px;
-}
-
-.timer-time {
-    font-size: 48px;
-    text-align: center;
-    color: #4ade80;
-    font-weight: bold;
-}
-
-.timer-info {
-    text-align: center;
-    margin-top: 10px;
-    color: #888;
-}
-
-.study-btn {
-    padding: 20px 40px;
-    font-size: 20px;
-    font-weight: bold;
-    border: 4px solid;
-    cursor: pointer;
-    color: white;
-}
-
-.start-btn {
-    background: #16a34a;
-    border-color: #4ade80;
-}
-
-.start-btn:hover {
-    background: #15803d;
-}
-
-.stop-btn {
-    background: #dc2626;
-    border-color: #f87171;
-}
-
-.stop-btn:hover {
-    background: #b91c1c;
-}
-
-.modal {
-    display: none;
-    position: fixed;
-    top: 0; left: 0; right: 0; bottom: 0;
-    background: rgba(0,0,0,0.9);
-    z-index: 1000;
-    padding: 20px;
-    overflow-y: auto;
-}
-
-.modal.active {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.modal-content {
-    background: #1a1a1a;
-    border: 4px solid #333;
-    padding: 30px;
-    max-width: 600px;
-    width: 100%;
-    max-height: 80vh;
-    overflow-y: auto;
-}
-
-.modal-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 20px;
-}
-
-.modal-title {
-    font-size: 24px;
-    font-weight: bold;
-}
-
-.close-btn {
-    background: #dc2626;
-    border: 2px solid #f87171;
-    color: white;
-    padding: 10px 20px;
-    cursor: pointer;
-    font-weight: bold;
-}
-
-.close-btn:hover {
-    background: #b91c1c;
-}
-
-.shop-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 20px;
-}
-
-.shop-item {
-    background: #000;
-    border: 4px solid #444;
-    padding: 20px;
-    text-align: center;
-}
-
-.shop-item-name {
-    font-weight: bold;
-    margin-bottom: 10px;
-    font-size: 16px;
-}
-
-.shop-item-cost {
-    color: #fbbf24;
-    font-weight: bold;
-    margin-bottom: 15px;
-}
-
-.buy-btn {
-    width: 100%;
-    padding: 12px;
-    font-weight: bold;
-    border: 4px solid;
-    cursor: pointer;
-    color: white;
-}
-
-.buy-btn.available {
-    background: #16a34a;
-    border-color: #4ade80;
-}
-
-.buy-btn.available:hover {
-    background: #15803d;
-}
-
-.buy-btn.unavailable {
-    background: #374151;
-    border-color: #4b5563;
-    color: #6b7280;
-    cursor: not-allowed;
-}
