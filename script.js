@@ -1,77 +1,52 @@
- let totalSeconds = 25 * 60;
+let totalSeconds = 0;
 let timer = null;
+
 let points = parseInt(localStorage.getItem("points")) || 0;
 let furnitureList = JSON.parse(localStorage.getItem("furnitureList")) || [];
 
 const timerDisplay = document.getElementById("timerDisplay");
 const pointsDisplay = document.getElementById("points");
-const room = document.getElementById("room");
-const character = document.getElementById("character");
+
+const startBtn = document.getElementById("startBtn");
+const stopBtn = document.getElementById("stopBtn");
+const resetBtn = document.getElementById("resetBtn");
+
 const buyBtn = document.getElementById("buyBtn");
 const furnitureMenu = document.getElementById("furnitureMenu");
-const resetTimerBtn = document.getElementById("resetTimerBtn");
+const room = document.getElementById("room");
 
 pointsDisplay.textContent = points;
 
-// -------------------------
-// Timer Functions
-// -------------------------
-function startTimer(duration = 25 * 60) {
-    clearInterval(timer);
-    totalSeconds = duration;
-    updateTimerDisplay();
-    timer = setInterval(updateTimer, 1000);
-}
-
+/* TIMER SYSTEM */
 function updateTimer() {
-    if (totalSeconds <= 0) {
-        clearInterval(timer);
-        addPoints(10);
-        alert("Session complete! +10 points 🌟");
-        totalSeconds = 25 * 60;
-        updateTimerDisplay();
-        return;
-    }
-    totalSeconds--;
-    updateTimerDisplay();
+    totalSeconds++;
+    const min = Math.floor(totalSeconds / 60);
+    const sec = totalSeconds % 60;
+    timerDisplay.textContent = `${min.toString().padStart(2,'0')}:${sec.toString().padStart(2,'0')}`;
 }
 
-function updateTimerDisplay() {
-    const minutes = Math.floor(totalSeconds / 60);
-    const seconds = totalSeconds % 60;
-    timerDisplay.textContent =
-        `${minutes.toString().padStart(2,'0')}:${seconds.toString().padStart(2,'0')}`;
-}
+startBtn.onclick = () => {
+    clearInterval(timer);
+    timer = setInterval(updateTimer, 1000);
+};
 
-// Reset timer
-resetTimerBtn.addEventListener("click", () => {
-    startTimer(25 * 60);
-});
+stopBtn.onclick = () => clearInterval(timer);
 
-// -------------------------
-// Points
-// -------------------------
-function addPoints(amount) {
-    points += amount;
-    pointsDisplay.textContent = points;
-    saveState();
-}
+resetBtn.onclick = () => {
+    clearInterval(timer);
+    totalSeconds = 0;
+    timerDisplay.textContent = "00:00";
+};
 
-character.addEventListener("click", () => {
-    addPoints(1);
-});
-
-// -------------------------
-// Furniture Buying
-// -------------------------
-buyBtn.addEventListener("click", () => {
+/* OPEN SHOP */
+buyBtn.onclick = () => {
     furnitureMenu.style.display = furnitureMenu.style.display === "none" ? "flex" : "none";
-});
+};
 
+/* BUYING ITEMS */
 furnitureMenu.querySelectorAll("img").forEach(item => {
     item.addEventListener("click", () => {
         const cost = parseInt(item.dataset.cost);
-        const type = item.dataset.type;
 
         if (points < cost) {
             alert("Not enough points!");
@@ -83,80 +58,82 @@ furnitureMenu.querySelectorAll("img").forEach(item => {
 
         const f = document.createElement("img");
         f.src = item.src;
-        f.className = "furniture";
-        f.style.left = "100px";
-        f.style.top = "100px";
-        f.dataset.type = type;
+        f.classList.add("furniture");
+        f.style.left = "150px";
+        f.style.top = "150px";
+
+        f.dataset.type = item.dataset.type;  
+
         room.appendChild(f);
 
-        furnitureList.push({ type, x: 100, y: 100, src: item.src });
-        saveState();
+        furnitureList.push({
+            src: item.src,
+            type: item.dataset.type,           
+            x: 150,
+            y: 150
+        });
+
         enableDrag(f);
+        saveState();
     });
 });
 
-// -------------------------
-// Drag & Drop
-// -------------------------
-let draggedFurniture = null;
+/* DRAGGING */
+let dragged = null;
 let offsetX = 0;
 let offsetY = 0;
 
 function enableDrag(el) {
-    el.addEventListener("mousedown", (e) => {
-        draggedFurniture = el;
+    el.addEventListener("mousedown", e => {
+        dragged = el;
         offsetX = e.offsetX;
         offsetY = e.offsetY;
-        el.style.cursor = "grabbing";
     });
 }
 
-document.addEventListener("mousemove", (e) => {
-    if (draggedFurniture) {
-        let x = e.clientX - offsetX;
-        let y = e.clientY - offsetY;
+document.addEventListener("mousemove", e => {
+    if (!dragged) return;
 
-        x = Math.max(0, Math.min(window.innerWidth - draggedFurniture.offsetWidth, x));
-        y = Math.max(0, Math.min(window.innerHeight - draggedFurniture.offsetHeight, y));
-
-        draggedFurniture.style.left = x + "px";
-        draggedFurniture.style.top = y + "px";
-    }
+    dragged.style.left = (e.clientX - offsetX) + "px";
+    dragged.style.top = (e.clientY - offsetY) + "px";
 });
 
 document.addEventListener("mouseup", () => {
-    if (draggedFurniture) {
-        const index = furnitureList.findIndex(f => f.src === draggedFurniture.src && f.type === draggedFurniture.dataset.type);
-        if (index !== -1) {
-            furnitureList[index].x = parseInt(draggedFurniture.style.left);
-            furnitureList[index].y = parseInt(draggedFurniture.style.top);
-        }
-        saveState();
-        draggedFurniture.style.cursor = "grab";
-        draggedFurniture = null;
+    if (!dragged) return;
+
+    const index = furnitureList.findIndex(
+        f => f.src === dragged.src && f.x === parseInt(dragged.style.left) && f.y === parseInt(dragged.style.top)
+    );
+
+    // If item found, update its saved coordinates
+    if (index !== -1) {
+        furnitureList[index].x = parseInt(dragged.style.left);
+        furnitureList[index].y = parseInt(dragged.style.top);
     }
+
+    saveState();
+    dragged = null;
 });
 
-// -------------------------
-// Save & Load
-// -------------------------
+/* SAVE STATE */
 function saveState() {
     localStorage.setItem("points", points);
     localStorage.setItem("furnitureList", JSON.stringify(furnitureList));
 }
 
-// Load saved furniture
+/* LOAD FURNITURE */
 furnitureList.forEach(f => {
     const el = document.createElement("img");
     el.src = f.src;
-    el.className = "furniture";
+    el.classList.add("furniture");
     el.style.left = f.x + "px";
     el.style.top = f.y + "px";
-    el.dataset.type = f.type;
+
+    el.dataset.type = f.type;   
+
     room.appendChild(el);
     enableDrag(el);
 });
 
-// Start timer automatically
-startTimer();
+
 
