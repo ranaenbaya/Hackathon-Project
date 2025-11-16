@@ -1,5 +1,6 @@
 let totalSeconds = 0;
 let timer = null;
+let GRID_SIZE = 20; // snapping grid size
 
 let points = parseInt(localStorage.getItem("points")) || 0;
 let furnitureList = JSON.parse(localStorage.getItem("furnitureList")) || [];
@@ -29,9 +30,7 @@ startBtn.onclick = () => {
     clearInterval(timer);
     timer = setInterval(updateTimer, 1000);
 };
-
 stopBtn.onclick = () => clearInterval(timer);
-
 resetBtn.onclick = () => {
     clearInterval(timer);
     totalSeconds = 0;
@@ -43,11 +42,23 @@ buyBtn.onclick = () => {
     furnitureMenu.style.display = furnitureMenu.style.display === "none" ? "flex" : "none";
 };
 
+/* UPDATE SHOP LABEL COLOUR */
+function updateShopLabels() {
+    furnitureMenu.querySelectorAll(".shop-item").forEach(item => {
+        const img = item.querySelector("img");
+        const label = item.querySelector(".cost-label");
+        const cost = parseInt(img.dataset.cost);
+
+        label.style.color = points >= cost ? "white" : "red";
+        label.textContent = cost;
+    });
+}
+updateShopLabels();
+
 /* BUYING ITEMS */
-furnitureMenu.querySelectorAll("img").forEach(item => {
+furnitureMenu.querySelectorAll(".shop-item img").forEach(item => {
     item.addEventListener("click", () => {
         const cost = parseInt(item.dataset.cost);
-
         if (points < cost) {
             alert("Not enough points!");
             return;
@@ -55,20 +66,20 @@ furnitureMenu.querySelectorAll("img").forEach(item => {
 
         points -= cost;
         pointsDisplay.textContent = points;
+        updateShopLabels();
 
         const f = document.createElement("img");
         f.src = item.src;
         f.classList.add("furniture");
         f.style.left = "150px";
         f.style.top = "150px";
-
-        f.dataset.type = item.dataset.type;  
+        f.dataset.type = item.dataset.type;
 
         room.appendChild(f);
 
         furnitureList.push({
             src: item.src,
-            type: item.dataset.type,           
+            type: item.dataset.type,
             x: 150,
             y: 150
         });
@@ -93,22 +104,28 @@ function enableDrag(el) {
 
 document.addEventListener("mousemove", e => {
     if (!dragged) return;
-
     dragged.style.left = (e.clientX - offsetX) + "px";
     dragged.style.top = (e.clientY - offsetY) + "px";
 });
 
+/* SNAP TO GRID ON DROP */
 document.addEventListener("mouseup", () => {
     if (!dragged) return;
 
-    const index = furnitureList.findIndex(
-        f => f.src === dragged.src && f.x === parseInt(dragged.style.left) && f.y === parseInt(dragged.style.top)
-    );
+    let left = parseInt(dragged.style.left);
+    let top = parseInt(dragged.style.top);
 
-    // If item found, update its saved coordinates
-    if (index !== -1) {
-        furnitureList[index].x = parseInt(dragged.style.left);
-        furnitureList[index].y = parseInt(dragged.style.top);
+    left = Math.round(left / GRID_SIZE) * GRID_SIZE;
+    top = Math.round(top / GRID_SIZE) * GRID_SIZE;
+
+    dragged.style.left = left + "px";
+    dragged.style.top = top + "px";
+
+    // Update furnitureList
+    const firstMatch = furnitureList.find(f => f.src === dragged.src && f.type === dragged.dataset.type);
+    if (firstMatch) {
+        firstMatch.x = left;
+        firstMatch.y = top;
     }
 
     saveState();
@@ -128,12 +145,12 @@ furnitureList.forEach(f => {
     el.classList.add("furniture");
     el.style.left = f.x + "px";
     el.style.top = f.y + "px";
-
-    el.dataset.type = f.type;   
+    el.dataset.type = f.type;
 
     room.appendChild(el);
     enableDrag(el);
 });
+
 
 
 
