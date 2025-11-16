@@ -5,42 +5,39 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Focus Room Game</title>
 
-    <!-- Pixel Font -->
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
 
-    <!-- Link CSS -->
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
 
     <div id="room">
 
         <!-- Timer -->
-        <div id="timerDisplay">25:00</div>
+        <div id="timerDisplay">00:00</div>
 
-        <!-- Reset Timer Button -->
-        <div id="resetTimerBtn">RESET TIMER</div>
+        <!-- Timer control buttons -->
+        <div id="startBtn" class="pixel-btn">START</div>
+        <div id="stopBtn" class="pixel-btn">STOP</div>
+        <div id="resetBtn" class="pixel-btn">RESET</div>
 
-        <!-- Character -->
-        <img id="character" src="https://via.placeholder.com/110x110/00BFFF/FFFFFF?text=C" alt="character">
-
-        <!-- Buttons -->
-        <div id="buyBtn" class="pixel-btn">BUY FURNITURE</div>
+        <!-- Shop buttons -->
+        <div id="buyBtn" class="pixel-btn">SHOP</div>
         <div id="pointsBtn" class="pixel-btn">POINTS: <span id="points">0</span></div>
 
-        <!-- Furniture selection menu -->
+        <!-- Furniture selection -->
         <div id="furnitureMenu">
-            <img src="https://via.placeholder.com/60x60/FFD700/000000?text=R" data-cost="10" data-type="rug" alt="Rug">
-            <img src="https://via.placeholder.com/60x60/8B4513/FFFFFF?text=B" data-cost="20" data-type="bed" alt="Bed">
-            <img src="https://via.placeholder.com/60x60/228B22/FFFFFF?text=P" data-cost="15" data-type="plant" alt="Plant Pot">
+            <img src="Bookshelf.png" data-type="bookshelf" data-cost="20">
+            <img src="rug.png" data-type="rug" data-cost="10">
+            <img src="Plant pot.png" data-type="plant" data-cost="15">
         </div>
 
     </div>
 
-    <!-- Link JS -->
     <script src="script.js"></script>
 </body>
 </html>
+
 
 
 
